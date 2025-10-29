@@ -1,0 +1,5 @@
+export const GAME_CONFIG = {
+  SERVER_TICK_RATE: 20,
+  MAP_WIDTH: 3000,
+  MAP_HEIGHT: 3000
+};

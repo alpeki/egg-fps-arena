@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🥚 Egg Arena - Roguelike Wave Shooter</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #000;
+      color: #fff;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    #game-container {
+      position: relative;
+      box-shadow: 0 0 50px rgba(0, 255, 0, 0.3);
+    }
+
+    #main-menu {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #000 0%, #001a00 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 5000;
+    }
+
+    #main-menu h1 {
+      font-size: 96px;
+      color: #00ff00;
+      text-shadow: 0 0 40px rgba(0, 255, 0, 0.8);
+      margin-bottom: 20px;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    #main-menu p {
+      font-size: 24px;
+      color: #888;
+      margin-bottom: 60px;
+    }
+
+    .menu-btn {
+      padding: 20px 60px;
+      font-size: 28px;
+      background: linear-gradient(135deg, #00ff00, #00aa00);
+      color: #000;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s;
+      box-shadow: 0 5px 20px rgba(0, 255, 0, 0.4);
+      margin: 10px;
+    }
+
+    .menu-btn:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0, 255, 0, 0.6);
+    }
+
+    .menu-btn:active {
+      transform: translateY(-2px);
+    }
+
+    #game-over-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.95);
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 4000;
+    }
+
+    #game-over-screen h1 {
+      font-size: 72px;
+      color: #ff0000;
+      text-shadow: 0 0 30px rgba(255, 0, 0, 0.8);
+      margin-bottom: 30px;
+    }
+
+    .stats-container {
+      background: rgba(0, 255, 0, 0.1);
+      border: 3px solid #00ff00;
+      border-radius: 15px;
+      padding: 40px 80px;
+      margin-bottom: 40px;
+    }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      margin: 15px 0;
+      font-size: 24px;
+    }
+
+    .stat-label {
+      color: #888;
+      margin-right: 40px;
+    }
+
+    .stat-value {
+      color: #00ff00;
+      font-weight: bold;
+    }
+
+    #controls-info {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background: rgba(0, 0, 0, 0.8);
+      border: 2px solid #00ff00;
+      border-radius: 8px;
+      padding: 15px;
+      font-size: 14px;
+      z-index: 100;
+    }
+
+    #controls-info h3 {
+      color: #00ff00;
+      margin-bottom: 10px;
+    }
+
+    #controls-info p {
+      margin: 5px 0;
+      color: #ccc;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Main Menu -->
+  <div id="main-menu">
+    <h1>🥚 EGG ARENA</h1>
+    <p>Roguelike Wave Shooter</p>
+    <button class="menu-btn" onclick="startGame()">▶ START GAME</button>
+    <button class="menu-btn" onclick="showControls()">🎮 CONTROLS</button>
+    <div style="margin-top: 40px; text-align: center; color: #666;">
+      <p>Survive endless waves of enemies</p>
+      <p>Level up and choose powerful upgrades</p>
+      <p>Defeat bosses every 10 waves</p>
+    </div>
+  </div>
+
+  <!-- Game Container -->
+  <div id="game-container"></div>
+
+  <!-- Game Over Screen -->
+  <div id="game-over-screen">
+    <h1>💀 GAME OVER</h1>
+    <div class="stats-container">
+      <div class="stat-row">
+        <span class="stat-label">Wave Reached:</span>
+        <span class="stat-value" id="final-wave">0</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Total Kills:</span>
+        <span class="stat-value" id="final-kills">0</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Final Level:</span>
+        <span class="stat-value" id="final-level">0</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Time Survived:</span>
+        <span class="stat-value" id="final-time">0:00</span>
+      </div>
+    </div>
+    <div>
+      <button class="menu-btn" onclick="restartGame()">🔄 PLAY AGAIN</button>
+      <button class="menu-btn" onclick="backToMenu()">🏠 MAIN MENU</button>
+    </div>
+  </div>
+
+  <!-- Controls Info -->
+  <div id="controls-info" class="hidden">
+    <h3>🎮 Controls</h3>
+    <p><strong>WASD</strong> - Move</p>
+    <p><strong>Mouse</strong> - Auto-aim</p>
+    <p><strong>Auto-fire</strong> - Always on</p>
+    <p><strong>SPACE</strong> - Dash (if unlocked)</p>
+    <p><strong>ESC</strong> - Pause</p>
+  </div>
+
+  <!-- Phaser 3 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.70.0/dist/phaser.min.js"></script>
+
+  <!-- Game Systems -->
+  <script src="./src/audio-new.js"></script>
+  <script src="./src/upgrades.js"></script>
+  <script src="./src/game-new.js"></script>
+  
+  <script>
+    console.log('🎮 All systems loaded!');
+  </script>
+
+  <script>
+    let currentGame = null;
+
+    function startGame() {
+      document.getElementById('main-menu').classList.add('hidden');
+      document.getElementById('controls-info').classList.remove('hidden');
+      
+      // Game is already initialized by game-new.js
+      console.log('🎮 Game started!');
+    }
+
+    function showControls() {
+      alert('Controls:\n\nWASD - Move\nMouse - Auto-aim\nAuto-fire - Always on\nSPACE - Dash (if unlocked)\nESC - Pause');
+    }
+
+    function showGameOver(wave, kills, level, time) {
+      document.getElementById('final-wave').textContent = wave;
+      document.getElementById('final-kills').textContent = kills;
+      document.getElementById('final-level').textContent = level;
+      
+      const minutes = Math.floor(time / 60);
+      const seconds = Math.floor(time % 60);
+      document.getElementById('final-time').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+      
+      document.getElementById('game-over-screen').style.display = 'flex';
+      
+      if (window.audioManager) {
+        window.audioManager.playGameOverSound();
+      }
+    }
+
+    function restartGame() {
+      document.getElementById('game-over-screen').style.display = 'none';
+      location.reload();
+    }
+
+    function backToMenu() {
+      document.getElementById('game-over-screen').style.display = 'none';
+      document.getElementById('main-menu').classList.remove('hidden');
+      document.getElementById('controls-info').classList.add('hidden');
+      location.reload();
+    }
+
+    // Make showGameOver globally available
+    window.showGameOver = showGameOver;
+  </script>
+
+</body>
+</html>

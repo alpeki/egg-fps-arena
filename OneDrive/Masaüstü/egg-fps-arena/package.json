@@ -1,0 +1,34 @@
+{
+  "name": "egg-fps-arena",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "npm run server",
+    "server": "node --loader ts-node/esm server.ts",
+    "client": "cd packages/client && npm run dev",
+    "dev:all": "concurrently \"npm run server\" \"npm run client\"",
+    "build": "tsc",
+    "build:server": "tsc server.ts --outDir dist",
+    "start": "node dist/server.js",
+    "install:all": "npm install && cd packages/client && npm install"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@colyseus/core": "^0.16.5",
+    "@colyseus/schema": "^3.0.4",
+    "@colyseus/ws-transport": "^0.16.5",
+    "phaser": "^3.70.0",
+    "ws": "^8.16.0"
+  },
+  "description": "Fast-paced multiplayer .io FPS game with egg characters. Built with TypeScript, Phaser 3, and Colyseus.",
+  "main": "Adsmock .js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

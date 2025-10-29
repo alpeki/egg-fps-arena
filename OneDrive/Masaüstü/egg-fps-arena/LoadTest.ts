@@ -3,8 +3,9 @@
 
 import WebSocket from 'ws';
 import { performance } from 'perf_hooks';
-import { BinaryProtocol } from 'shared';
-import type { InputCmd } from 'shared';
+import { BinaryProtocol } from './packages/shared/protocol';
+import type { InputCmd } from './packages/shared/types';
+
 
 const SERVER_URL = process.env.WS_URL || 'ws://localhost:2567';
 const BOT_COUNT = parseInt(process.env.BOT_COUNT || '50', 10);

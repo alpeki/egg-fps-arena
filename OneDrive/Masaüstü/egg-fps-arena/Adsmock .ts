@@ -2,7 +2,8 @@
 // This is a placeholder for real AdMob/IronSource integration
 
 import type { Room, Client } from '@colyseus/core';
-import { createLogger } from '../utils/logger';
+import { createLogger } from './utils/logger';
+
 
 const logger = createLogger('AdsMock');
 
