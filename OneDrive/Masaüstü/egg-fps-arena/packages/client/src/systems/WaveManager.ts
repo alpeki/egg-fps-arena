@@ -49,7 +49,9 @@ export class WaveManager {
     // Determine enemy type based on wave
     let enemyType: EnemyType;
     if (isBossWave && this.enemiesSpawned === this.enemiesThisWave - 1) {
-      enemyType = EnemyType.BOSS;
+      // Choose boss type based on wave
+      const bossTypes = [EnemyType.BOSS_TANK, EnemyType.BOSS_SWARM, EnemyType.BOSS_HYBRID];
+      enemyType = bossTypes[Math.floor(wave / WAVE_BOSS_INTERVAL) % bossTypes.length];
     } else {
       enemyType = this.getRandomEnemyType(wave);
     }
@@ -89,9 +91,15 @@ export class WaveManager {
   private getRandomEnemyType(wave: number): EnemyType {
     const types: EnemyType[] = [EnemyType.RUSHER];
     
+    // Gradually unlock enemy types
     if (wave >= 2) types.push(EnemyType.SHOOTER);
-    if (wave >= 3) types.push(EnemyType.EXPLODER);
-    if (wave >= 5) types.push(EnemyType.TANK);
+    if (wave >= 3) types.push(EnemyType.EXPLODER, EnemyType.TANK);
+    if (wave >= 4) types.push(EnemyType.SPLITTER);
+    if (wave >= 5) types.push(EnemyType.TELEPORTER, EnemyType.CHARGER);
+    if (wave >= 6) types.push(EnemyType.HEALER);
+    if (wave >= 7) types.push(EnemyType.SHIELDER, EnemyType.SNIPER);
+    if (wave >= 8) types.push(EnemyType.SPAWNER);
+    if (wave >= 9) types.push(EnemyType.GHOST);
 
     return types[Math.floor(Math.random() * types.length)];
   }

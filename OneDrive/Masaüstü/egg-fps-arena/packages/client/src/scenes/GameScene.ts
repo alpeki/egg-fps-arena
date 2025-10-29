@@ -80,6 +80,9 @@ export class GameScene extends Phaser.Scene {
       this.projectiles.getChildren() as any[]
     );
 
+    // Update HUD
+    this.updateHUD();
+
     // Check for level up
     if (this.xpSystem.checkLevelUp()) {
       this.showLevelUpScreen();
@@ -88,6 +91,56 @@ export class GameScene extends Phaser.Scene {
     // Check for game over
     if (this.stateManager.playerState.isDead) {
       this.gameOver();
+    }
+  }
+
+  private updateHUD(): void {
+    const player = this.stateManager.playerState;
+    const game = this.stateManager.gameState;
+
+    // Update HP bar
+    const hpBar = this.registry.get('hpBar') as Phaser.GameObjects.Rectangle;
+    const hpText = this.registry.get('hpText') as Phaser.GameObjects.Text;
+    if (hpBar && hpText) {
+      const hpPercent = player.health / player.maxHealth;
+      hpBar.width = 246 * hpPercent;
+      hpText.setText(`${Math.ceil(player.health)} / ${player.maxHealth}`);
+      
+      // Color based on HP percentage
+      if (hpPercent > 0.6) {
+        hpBar.setFillStyle(0x00FF00); // Green
+      } else if (hpPercent > 0.3) {
+        hpBar.setFillStyle(0xFFAA00); // Orange
+      } else {
+        hpBar.setFillStyle(0xFF0000); // Red
+      }
+    }
+
+    // Update XP bar
+    const xpBar = this.registry.get('xpBar') as Phaser.GameObjects.Rectangle;
+    const xpText = this.registry.get('xpText') as Phaser.GameObjects.Text;
+    if (xpBar && xpText) {
+      const xpPercent = player.xp / player.xpToNextLevel;
+      xpBar.width = 246 * xpPercent;
+      xpText.setText(`${Math.floor(player.xp)} / ${player.xpToNextLevel}`);
+    }
+
+    // Update level text
+    const levelText = this.registry.get('levelText') as Phaser.GameObjects.Text;
+    if (levelText) {
+      levelText.setText(`LEVEL ${player.level}`);
+    }
+
+    // Update wave text
+    const waveText = this.registry.get('waveText') as Phaser.GameObjects.Text;
+    if (waveText) {
+      waveText.setText(`Wave: ${game.wave}`);
+    }
+
+    // Update kills text
+    const killsText = this.registry.get('killsText') as Phaser.GameObjects.Text;
+    if (killsText) {
+      killsText.setText(`Kills: ${game.kills}`);
     }
   }
 
@@ -128,28 +181,81 @@ export class GameScene extends Phaser.Scene {
   }
 
   private createHUD(): void {
-    // HP Bar
-    const hpBarBg = this.add.rectangle(100, 30, 200, 20, 0x333333).setScrollFactor(0);
-    const hpBar = this.add.rectangle(100, 30, 200, 20, 0xFF0000).setScrollFactor(0);
-    hpBar.setOrigin(0, 0.5);
+    const { width } = this.cameras.main;
+
+    // HP Bar Background
+    const hpBarBg = this.add.rectangle(20, 30, 250, 25, 0x1a1a1a).setScrollFactor(0);
     hpBarBg.setOrigin(0, 0.5);
+    hpBarBg.setStrokeStyle(2, 0x444444);
 
-    // XP Bar
-    const xpBarBg = this.add.rectangle(100, 60, 200, 15, 0x333333).setScrollFactor(0);
-    const xpBar = this.add.rectangle(100, 60, 200, 15, 0x00FF00).setScrollFactor(0);
-    xpBar.setOrigin(0, 0.5);
+    // HP Bar Fill
+    const hpBar = this.add.rectangle(22, 30, 246, 21, 0xFF0000).setScrollFactor(0);
+    hpBar.setOrigin(0, 0.5);
+
+    // HP Text
+    const hpText = this.add.text(145, 30, '100 / 100', {
+      fontSize: '14px',
+      color: '#FFFFFF',
+      fontStyle: 'bold'
+    }).setScrollFactor(0).setOrigin(0.5);
+
+    // HP Label
+    this.add.text(20, 12, '❤️ HEALTH', {
+      fontSize: '12px',
+      color: '#FF6B6B',
+      fontStyle: 'bold'
+    }).setScrollFactor(0);
+
+    // XP Bar Background
+    const xpBarBg = this.add.rectangle(20, 70, 250, 20, 0x1a1a1a).setScrollFactor(0);
     xpBarBg.setOrigin(0, 0.5);
+    xpBarBg.setStrokeStyle(2, 0x444444);
 
-    // Wave text
-    const waveText = this.add.text(this.cameras.main.width - 20, 20, 'Wave: 1', {
-      fontSize: '24px',
+    // XP Bar Fill (starts at 0 width)
+    const xpBar = this.add.rectangle(22, 70, 0, 16, 0x00D9FF).setScrollFactor(0);
+    xpBar.setOrigin(0, 0.5);
+
+    // XP Text
+    const xpText = this.add.text(145, 70, '0 / 100', {
+      fontSize: '14px',
+      color: '#FFFFFF',
+      fontStyle: 'bold'
+    }).setScrollFactor(0).setOrigin(0.5);
+
+    // XP Label
+    this.add.text(20, 52, '⭐ EXPERIENCE', {
+      fontSize: '12px',
+      color: '#00D9FF',
+      fontStyle: 'bold'
+    }).setScrollFactor(0);
+
+    // Level display
+    const levelText = this.add.text(width - 20, 20, 'LEVEL 1', {
+      fontSize: '28px',
+      color: '#FFD700',
+      fontStyle: 'bold'
+    }).setScrollFactor(0).setOrigin(1, 0);
+
+    // Wave display
+    const waveText = this.add.text(width - 20, 55, 'Wave: 1', {
+      fontSize: '20px',
       color: '#FFFFFF'
+    }).setScrollFactor(0).setOrigin(1, 0);
+
+    // Kills counter
+    const killsText = this.add.text(width - 20, 85, 'Kills: 0', {
+      fontSize: '16px',
+      color: '#FF6B6B'
     }).setScrollFactor(0).setOrigin(1, 0);
 
     // Store references for updates
     this.registry.set('hpBar', hpBar);
+    this.registry.set('hpText', hpText);
     this.registry.set('xpBar', xpBar);
+    this.registry.set('xpText', xpText);
+    this.registry.set('levelText', levelText);
     this.registry.set('waveText', waveText);
+    this.registry.set('killsText', killsText);
   }
 
   private showLevelUpScreen(): void {

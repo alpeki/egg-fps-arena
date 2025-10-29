@@ -1,11 +1,17 @@
 import Phaser from 'phaser';
+import { MetaProgressionSystem } from '../systems/MetaProgressionSystem.js';
 
 export class MenuScene extends Phaser.Scene {
+  private metaSystem!: MetaProgressionSystem;
+
   constructor() {
     super({ key: 'MenuScene' });
   }
 
   create(): void {
+    // Initialize meta progression system
+    this.metaSystem = new MetaProgressionSystem();
+    this.registry.set('metaSystem', this.metaSystem);
     const { width, height } = this.cameras.main;
 
     // Background
@@ -32,9 +38,8 @@ export class MenuScene extends Phaser.Scene {
     });
 
     // Meta upgrades button
-    const upgradesButton = this.createButton(width / 2, height / 2 + 130, 'UPGRADES', () => {
-      // TODO: Open meta upgrades screen
-      console.log('Meta upgrades coming soon!');
+    const upgradesButton = this.createButton(width / 2, height / 2 + 130, '💎 UPGRADES', () => {
+      this.scene.start('MetaUpgradesScene', { metaSystem: this.metaSystem });
     });
 
     // Settings button

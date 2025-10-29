@@ -17,11 +17,28 @@ export interface PlayerState {
 
 // Enemy types
 export enum EnemyType {
-  RUSHER = 'rusher',
-  SHOOTER = 'shooter',
-  EXPLODER = 'exploder',
-  TANK = 'tank',
-  BOSS = 'boss'
+  // Basic enemies
+  RUSHER = 'rusher',           // Fast, low HP, melee
+  TANK = 'tank',               // Slow, high HP, high damage
+  SHOOTER = 'shooter',         // Medium speed, ranged attacks
+  
+  // Special enemies
+  EXPLODER = 'exploder',       // Suicide bomber, AOE damage
+  SPLITTER = 'splitter',       // Splits into smaller enemies on death
+  TELEPORTER = 'teleporter',   // Teleports near player
+  HEALER = 'healer',           // Heals nearby enemies
+  SHIELDER = 'shielder',       // Shields nearby enemies
+  
+  // Advanced enemies
+  SNIPER = 'sniper',           // Long range, high damage, slow fire
+  SPAWNER = 'spawner',         // Spawns minions
+  CHARGER = 'charger',         // Charges at player with knockback
+  GHOST = 'ghost',             // Phases through obstacles
+  
+  // Boss types
+  BOSS_TANK = 'boss_tank',     // Massive HP, slow, devastating
+  BOSS_SWARM = 'boss_swarm',   // Spawns many minions
+  BOSS_HYBRID = 'boss_hybrid'  // Multiple attack patterns
 }
 
 export interface EnemyState {

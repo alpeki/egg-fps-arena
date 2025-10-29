@@ -1,9 +1,11 @@
 import Phaser from 'phaser';
+import { MetaProgressionSystem } from '../systems/MetaProgressionSystem.js';
 
 export class GameOverScene extends Phaser.Scene {
   private wave!: number;
   private survivalTime!: number;
   private kills!: number;
+  private metaSystem!: MetaProgressionSystem;
 
   constructor() {
     super({ key: 'GameOverScene' });
@@ -13,6 +15,12 @@ export class GameOverScene extends Phaser.Scene {
     this.wave = data.wave;
     this.survivalTime = data.time;
     this.kills = data.kills;
+    
+    // Get meta system from registry
+    this.metaSystem = this.registry.get('metaSystem') as MetaProgressionSystem;
+    if (!this.metaSystem) {
+      this.metaSystem = new MetaProgressionSystem();
+    }
   }
 
   create(): void {
@@ -57,12 +65,25 @@ export class GameOverScene extends Phaser.Scene {
       color: '#FFFFFF'
     }).setOrigin(0.5);
 
-    // Coins earned (placeholder)
-    const coinsEarned = Math.floor(this.kills * 10 + this.wave * 50);
-    this.add.text(width / 2, statsY + 180, `Coins Earned: ${coinsEarned}`, {
+    // Calculate and award coins
+    const coinsEarned = this.metaSystem.calculateCoinsEarned(this.wave, this.kills, this.survivalTime);
+    this.metaSystem.addCoins(coinsEarned);
+    
+    // Check for new high score
+    const isNewRecord = this.metaSystem.updateHighScore('default', this.wave, this.survivalTime, this.kills);
+    
+    this.add.text(width / 2, statsY + 180, `💰 Coins Earned: ${coinsEarned}`, {
       fontSize: '24px',
       color: '#FFD700'
     }).setOrigin(0.5);
+    
+    if (isNewRecord) {
+      this.add.text(width / 2, statsY + 220, '🏆 NEW RECORD!', {
+        fontSize: '28px',
+        color: '#FF00FF',
+        fontStyle: 'bold'
+      }).setOrigin(0.5);
+    }
 
     // Buttons
     const buttonY = height - 150;

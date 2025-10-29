@@ -55,16 +55,23 @@ export class XPSystem {
   spawnXPOrb(scene: Phaser.Scene, x: number, y: number, value: number): void {
     const gameScene = scene as any;
     if (gameScene.getXPOrbsGroup) {
-      const orb = scene.add.circle(x, y, 8, 0x00FF00);
-      (orb as any).value = value;
+      // Scale XP value based on current wave
+      const wave = this.stateManager.gameState.wave;
+      const scaledValue = Math.floor(value * Math.pow(1.1, wave - 1)); // 10% more XP per wave
+      
+      const orb = scene.add.circle(x, y, 8, 0x00D9FF);
+      (orb as any).value = scaledValue;
       gameScene.getXPOrbsGroup().add(orb);
+
+      // Add glow effect
+      orb.setStrokeStyle(2, 0xFFFFFF, 0.5);
 
       // Add to state
       this.stateManager.xpOrbs.set(`xp_${Date.now()}_${Math.random()}`, {
         id: `xp_${Date.now()}`,
         x,
         y,
-        value
+        value: scaledValue
       });
     }
   }
