@@ -37,3 +37,8 @@ test_output.txt
 # Temporary files
 *.tmp
 *.temp
+
+# Old multiplayer files (deprecated)
+server.ts
+arena-room.ts
+packages/server/

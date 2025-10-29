@@ -1,49 +1,42 @@
-# 🥚 Egg-FPS Arena
+# 🥚 Egg Survivor: Last Hatch
 
-Fast-paced multiplayer .io FPS game with egg characters. Built with TypeScript, Phaser 3, and Colyseus.
+Single-player roguelite FPS survivor game. Survive endless waves of enemies, level up, and choose powerful upgrades! Built with TypeScript and Phaser 3.
 
 ## ✨ Features
 
-- **Authoritative Server**: Server-side physics and validation
-- **Client-Side Prediction**: Smooth, responsive controls
-- **Server Reconciliation**: Automatic correction of client predictions
-- **Snapshot Interpolation**: Smooth rendering of other players
-- **Lag Compensation**: Fair hit detection with circular buffer
-- **Binary Protocol**: <120 byte packets for efficiency
-- **Bot Fill**: Auto-fill empty slots with AI bots
-- **Cross-Platform**: Web (desktop + mobile) ready
-- **🆕 Load Testing**: 50-bot stress testing tool
-- **🆕 Ads Mock System**: Rewarded video + interstitial simulation
-- **🆕 Region Optimization**: Auto-select best region (TR-optimized)
+- **🎮 Roguelite Gameplay**: Endless waves with increasing difficulty
+- **⬆️ Level-Up System**: Gain XP, level up, choose from 3 random upgrades
+- **💪 15+ Upgrades**: Damage, defense, mobility, and utility upgrades
+- **👾 5 Enemy Types**: Rusher, Shooter, Exploder, Tank, and Boss
+- **🌊 Wave System**: Progressive difficulty with boss waves every 5 waves
+- **💾 Meta Progression**: Persistent upgrades between runs (coming soon)
+- **🎨 Modern UI**: Clean, responsive interface
+- **🎵 Audio System**: Sound effects and music (coming soon)
+- **📱 Cross-Platform**: Web (desktop + mobile) ready
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 
-- Node.js >= 20
-- pnpm >= 8
+- Node.js >= 18
+- npm or pnpm
 
 ### Installation
 
 ```bash
-# Install pnpm if you don't have it
-npm install -g pnpm
-
-# Clone and install dependencies
-git clone <your-repo-url>
+# Clone the repository
+git clone https://github.com/alpeki/egg-fps-arena.git
 cd egg-fps-arena
-pnpm install
+
+# Install dependencies
+npm run install:all
 ```
 
 ### Development
 
 ```bash
-# Run both server and client concurrently
-pnpm dev
-
-# Or run separately:
-pnpm dev:server  # Server at ws://localhost:2567
-pnpm dev:client  # Client at http://localhost:5173
+# Run development server
+npm run dev
 ```
 
 Visit `http://localhost:5173` to play!
@@ -51,11 +44,11 @@ Visit `http://localhost:5173` to play!
 ### Production Build
 
 ```bash
-# Build all packages
-pnpm build
+# Build for production
+npm run build
 
-# Start production server
-cd packages/server && pnpm start
+# Preview production build
+npm run preview
 ```
 
 ## 📦 Project Structure

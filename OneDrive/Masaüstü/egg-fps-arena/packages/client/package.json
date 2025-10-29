@@ -1,6 +1,6 @@
 {
-  "name": "egg-fps-client",
-  "version": "0.1.0",
+  "name": "egg-survivor-client",
+  "version": "2.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -8,10 +8,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
-  "@colyseus/client": "^0.15.14",
-  "phaser": "^3.70.0"
+    "phaser": "^3.70.0"
   },
   "devDependencies": {
-    "vite": "^5.0.0"
+    "vite": "^5.0.0",
+    "typescript": "^5.9.3"
   }
 }
