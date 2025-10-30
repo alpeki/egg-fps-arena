@@ -26,9 +26,12 @@ export class MetaProgressionSystem {
         damageBonus: 0,
         xpBonus: 0,
         startingLevel: 1,
-        unlockedWeapons: [WeaponType.PISTOL]
+        unlockedWeapons: [WeaponType.PISTOL],
+        banishSlots: 1,
+        skipSlots: 1,
+        refreshSlots: 1
       },
-      totalCoins: 0,
+      totalTokens: 0,
       highScores: {},
       settings: {
         volume: 1,
@@ -55,27 +58,27 @@ export class MetaProgressionSystem {
     return this.saveData.metaUpgrades;
   }
 
-  addCoins(amount: number): void {
-    this.saveData.totalCoins += amount;
+  addTokens(amount: number): void {
+    this.saveData.totalTokens += amount;
     this.save();
   }
 
-  spendCoins(amount: number): boolean {
-    if (this.saveData.totalCoins >= amount) {
-      this.saveData.totalCoins -= amount;
+  spendTokens(amount: number): boolean {
+    if (this.saveData.totalTokens >= amount) {
+      this.saveData.totalTokens -= amount;
       this.save();
       return true;
     }
     return false;
   }
 
-  getCoins(): number {
-    return this.saveData.totalCoins;
+  getTokens(): number {
+    return this.saveData.totalTokens;
   }
 
   // Meta upgrade purchases
   upgradeMaxHP(cost: number = 50): boolean {
-    if (this.spendCoins(cost)) {
+    if (this.spendTokens(cost)) {
       this.saveData.metaUpgrades.maxHPBonus += 10;
       this.save();
       return true;
@@ -84,7 +87,7 @@ export class MetaProgressionSystem {
   }
 
   upgradeDamage(cost: number = 75): boolean {
-    if (this.spendCoins(cost)) {
+    if (this.spendTokens(cost)) {
       this.saveData.metaUpgrades.damageBonus += 5;
       this.save();
       return true;
@@ -93,8 +96,35 @@ export class MetaProgressionSystem {
   }
 
   upgradeXPGain(cost: number = 60): boolean {
-    if (this.spendCoins(cost)) {
+    if (this.spendTokens(cost)) {
       this.saveData.metaUpgrades.xpBonus += 10;
+      this.save();
+      return true;
+    }
+    return false;
+  }
+
+  upgradeBanishSlots(cost: number = 100): boolean {
+    if (this.spendTokens(cost)) {
+      this.saveData.metaUpgrades.banishSlots++;
+      this.save();
+      return true;
+    }
+    return false;
+  }
+
+  upgradeSkipSlots(cost: number = 80): boolean {
+    if (this.spendTokens(cost)) {
+      this.saveData.metaUpgrades.skipSlots++;
+      this.save();
+      return true;
+    }
+    return false;
+  }
+
+  upgradeRefreshSlots(cost: number = 120): boolean {
+    if (this.spendTokens(cost)) {
+      this.saveData.metaUpgrades.refreshSlots++;
       this.save();
       return true;
     }
@@ -103,7 +133,7 @@ export class MetaProgressionSystem {
 
   unlockWeapon(weapon: WeaponType, cost: number = 100): boolean {
     if (!this.saveData.metaUpgrades.unlockedWeapons.includes(weapon)) {
-      if (this.spendCoins(cost)) {
+      if (this.spendTokens(cost)) {
         this.saveData.metaUpgrades.unlockedWeapons.push(weapon);
         this.save();
         return true;
@@ -130,8 +160,8 @@ export class MetaProgressionSystem {
     return this.saveData.highScores[arenaId] || { wave: 0, time: 0, kills: 0 };
   }
 
-  // Calculate coins earned from a run
-  calculateCoinsEarned(wave: number, kills: number, timeSeconds: number): number {
+  // Calculate tokens earned from a run
+  calculateTokensEarned(wave: number, kills: number, timeSeconds: number): number {
     const waveBonus = wave * 10;
     const killBonus = kills * 2;
     const timeBonus = Math.floor(timeSeconds / 10);

@@ -138,7 +138,229 @@ export const UPGRADES: Upgrade[] = [
     icon: '🍀',
     maxStacks: 3,
     effect: (player, stacks) => {
-      // Luck affects upgrade pool
+      player.luck = stacks;
+    }
+  },
+
+  // ADDITIONAL DAMAGE UPGRADES
+  {
+    id: 'crit_chance',
+    name: 'Critical Strike',
+    description: '+5% crit chance',
+    category: UpgradeCategory.DAMAGE,
+    icon: '💥',
+    maxStacks: 10,
+    effect: (player, stacks) => {
+      player.critChance = stacks * 0.05;
+    }
+  },
+  {
+    id: 'crit_damage',
+    name: 'Deadly Precision',
+    description: '+25% crit damage',
+    category: UpgradeCategory.DAMAGE,
+    icon: '🎯',
+    maxStacks: 6,
+    effect: (player, stacks) => {
+      player.critDamage = 2.0 + (stacks * 0.25);
+    }
+  },
+  {
+    id: 'projectile_speed',
+    name: 'Velocity',
+    description: '+15% projectile speed',
+    category: UpgradeCategory.DAMAGE,
+    icon: '⚡',
+    maxStacks: 5,
+    effect: (player, stacks) => {
+      // Applied in projectile creation
+    }
+  },
+  {
+    id: 'range',
+    name: 'Long Range',
+    description: '+20% weapon range',
+    category: UpgradeCategory.DAMAGE,
+    icon: '🔭',
+    maxStacks: 5,
+    effect: (player, stacks) => {
+      // Applied in projectile lifetime
+    }
+  },
+  {
+    id: 'explosive_rounds',
+    name: 'Explosive Rounds',
+    description: 'Bullets explode on impact',
+    category: UpgradeCategory.DAMAGE,
+    icon: '💣',
+    maxStacks: 1,
+    effect: (player, stacks) => {
+      // Applied in combat system
+    }
+  },
+
+  // ADDITIONAL DEFENSE UPGRADES
+  {
+    id: 'lifesteal',
+    name: 'Vampirism',
+    description: '+3% lifesteal',
+    category: UpgradeCategory.DEFENSE,
+    icon: '🩸',
+    maxStacks: 7,
+    effect: (player, stacks) => {
+      player.lifesteal = stacks * 0.03;
+    }
+  },
+  {
+    id: 'thorns',
+    name: 'Thorns',
+    description: 'Reflect 10% damage',
+    category: UpgradeCategory.DEFENSE,
+    icon: '🌵',
+    maxStacks: 5,
+    effect: (player, stacks) => {
+      // Applied in combat system
+    }
+  },
+  {
+    id: 'dodge',
+    name: 'Evasion',
+    description: '+5% dodge chance',
+    category: UpgradeCategory.DEFENSE,
+    icon: '🌀',
+    maxStacks: 6,
+    effect: (player, stacks) => {
+      // Applied in combat system
+    }
+  },
+  {
+    id: 'shield',
+    name: 'Energy Shield',
+    description: 'Absorb 50 damage',
+    category: UpgradeCategory.DEFENSE,
+    icon: '🛡️',
+    maxStacks: 3,
+    effect: (player, stacks) => {
+      // Applied as temporary shield
+    }
+  },
+
+  // ADDITIONAL MOBILITY UPGRADES
+  {
+    id: 'knockback_resist',
+    name: 'Steadfast',
+    description: '+20% knockback resist',
+    category: UpgradeCategory.MOBILITY,
+    icon: '⚓',
+    maxStacks: 5,
+    effect: (player, stacks) => {
+      // Applied in combat system
+    }
+  },
+  {
+    id: 'dash_distance',
+    name: 'Long Dash',
+    description: '+20% dash distance',
+    category: UpgradeCategory.MOBILITY,
+    icon: '🚀',
+    maxStacks: 4,
+    effect: (player, stacks) => {
+      // Applied in dash system
+    }
+  },
+
+  // ADDITIONAL UTILITY UPGRADES
+  {
+    id: 'item_duration',
+    name: 'Preservation',
+    description: '+50% item duration',
+    category: UpgradeCategory.UTILITY,
+    icon: '⏱️',
+    maxStacks: 3,
+    effect: (player, stacks) => {
+      // Applied to item drops
+    }
+  },
+  {
+    id: 'rare_drops',
+    name: 'Fortune',
+    description: '+15% rare drop chance',
+    category: UpgradeCategory.UTILITY,
+    icon: '💎',
+    maxStacks: 5,
+    effect: (player, stacks) => {
+      // Applied in drop system
+    }
+  },
+  {
+    id: 'token_gain',
+    name: 'Greed',
+    description: '+10% token gain',
+    category: UpgradeCategory.UTILITY,
+    icon: '🪙',
+    maxStacks: 5,
+    effect: (player, stacks) => {
+      // Applied in token calculation
+    }
+  },
+  {
+    id: 'cooldown_reduction',
+    name: 'Haste',
+    description: '-5% all cooldowns',
+    category: UpgradeCategory.UTILITY,
+    icon: '⏩',
+    maxStacks: 6,
+    effect: (player, stacks) => {
+      // Applied to all abilities
+    }
+  },
+  {
+    id: 'area_damage',
+    name: 'Shockwave',
+    description: 'Damage nearby enemies',
+    category: UpgradeCategory.DAMAGE,
+    icon: '🌊',
+    maxStacks: 3,
+    effect: (player, stacks) => {
+      // Applied as periodic AOE
+    }
+  },
+  {
+    id: 'chain_lightning',
+    name: 'Chain Lightning',
+    description: 'Attacks chain to enemies',
+    category: UpgradeCategory.DAMAGE,
+    icon: '⚡',
+    maxStacks: 1,
+    effect: (player, stacks) => {
+      // Applied in combat system
+    }
+  },
+  {
+    id: 'poison',
+    name: 'Toxic Rounds',
+    description: 'Poison enemies over time',
+    category: UpgradeCategory.DAMAGE,
+    icon: '☠️',
+    maxStacks: 3,
+    effect: (player, stacks) => {
+      // Applied as DOT effect
+    }
+  },
+  {
+    id: 'freeze',
+    name: 'Frost Bullets',
+    description: 'Slow enemies by 20%',
+    category: UpgradeCategory.UTILITY,
+    icon: '❄️',
+    maxStacks: 3,
+    effect: (player, stacks) => {
+      // Applied as slow effect
     }
   }
 ];
+
+// Utility function to get upgrade by ID
+export function getUpgradeById(id: string): Upgrade | undefined {
+  return UPGRADES.find(u => u.id === id);
+}

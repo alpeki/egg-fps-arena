@@ -5,16 +5,18 @@ export class GameOverScene extends Phaser.Scene {
   private wave!: number;
   private survivalTime!: number;
   private kills!: number;
+  private tokens!: number;
   private metaSystem!: MetaProgressionSystem;
 
   constructor() {
     super({ key: 'GameOverScene' });
   }
 
-  init(data: { wave: number; time: number; kills: number }): void {
+  init(data: { wave: number; time: number; kills: number; tokens?: number }): void {
     this.wave = data.wave;
     this.survivalTime = data.time;
     this.kills = data.kills;
+    this.tokens = data.tokens || 0;
     
     // Get meta system from registry
     this.metaSystem = this.registry.get('metaSystem') as MetaProgressionSystem;
@@ -64,17 +66,15 @@ export class GameOverScene extends Phaser.Scene {
       fontSize: '24px',
       color: '#FFFFFF'
     }).setOrigin(0.5);
-
-    // Calculate and award coins
-    const coinsEarned = this.metaSystem.calculateCoinsEarned(this.wave, this.kills, this.survivalTime);
-    this.metaSystem.addCoins(coinsEarned);
     
     // Check for new high score
     const isNewRecord = this.metaSystem.updateHighScore('default', this.wave, this.survivalTime, this.kills);
     
-    this.add.text(width / 2, statsY + 180, `💰 Coins Earned: ${coinsEarned}`, {
-      fontSize: '24px',
-      color: '#FFD700'
+    // Tokens earned (zaten GameScene'de kaydedildi)
+    this.add.text(width / 2, statsY + 180, `🪙 Tokens Earned: ${this.tokens}`, {
+      fontSize: '28px',
+      color: '#FFD700',
+      fontStyle: 'bold'
     }).setOrigin(0.5);
     
     if (isNewRecord) {

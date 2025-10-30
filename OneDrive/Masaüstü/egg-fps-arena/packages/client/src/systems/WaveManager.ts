@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { StateManager } from '../core/StateManager';
 import { EnemyType } from '../../../shared/types';
-import { WAVE_BASE_ENEMY_COUNT, WAVE_SCALING_FACTOR, WAVE_BOSS_INTERVAL, ENEMY_SPAWN_DISTANCE } from '../../../shared/constants';
+import { WAVE_BASE_ENEMY_COUNT, WAVE_SCALING_FACTOR, WAVE_BOSS_INTERVAL, WAVE_HORDE_MULTIPLIER, ENEMY_SPAWN_DISTANCE, TOKENS_PER_WAVE } from '../../../shared/constants';
 import { Enemy } from '../entities/Enemy';
 
 export class WaveManager {
@@ -19,9 +19,25 @@ export class WaveManager {
 
   startWave(): void {
     const wave = this.stateManager.gameState.wave;
-    this.enemiesThisWave = Math.floor(WAVE_BASE_ENEMY_COUNT * Math.pow(WAVE_SCALING_FACTOR, wave - 1));
+    const isHordeWave = wave % WAVE_BOSS_INTERVAL === 0;
+    
+    // Calculate base enemy count with exponential scaling
+    let baseCount = Math.floor(WAVE_BASE_ENEMY_COUNT + (wave - 1) * 3);
+    
+    // Apply horde multiplier every 10 waves
+    if (isHordeWave) {
+      baseCount = Math.floor(baseCount * WAVE_HORDE_MULTIPLIER);
+      console.log(`🔥 HORDE WAVE ${wave}! Prepare for ${baseCount} enemies!`);
+    }
+    
+    this.enemiesThisWave = baseCount;
     this.enemiesSpawned = 0;
     this.spawnTimer = 0;
+    
+    // Award tokens for completing previous wave
+    if (wave > 1) {
+      this.stateManager.runData.tokensEarned += TOKENS_PER_WAVE;
+    }
 
     console.log(`Wave ${wave} started! Enemies: ${this.enemiesThisWave}`);
   }
@@ -44,16 +60,17 @@ export class WaveManager {
 
   private spawnEnemy(): void {
     const wave = this.stateManager.gameState.wave;
-    const isBossWave = wave % WAVE_BOSS_INTERVAL === 0;
+    const isHordeWave = wave % WAVE_BOSS_INTERVAL === 0;
     
     // Determine enemy type based on wave
     let enemyType: EnemyType;
-    if (isBossWave && this.enemiesSpawned === this.enemiesThisWave - 1) {
-      // Choose boss type based on wave
-      const bossTypes = [EnemyType.BOSS_TANK, EnemyType.BOSS_SWARM, EnemyType.BOSS_HYBRID];
-      enemyType = bossTypes[Math.floor(wave / WAVE_BOSS_INTERVAL) % bossTypes.length];
+    
+    // On horde waves, spawn more variety and tougher enemies
+    if (isHordeWave) {
+      // Spawn a mix of all available enemy types
+      enemyType = this.getRandomEnemyType(wave, true);
     } else {
-      enemyType = this.getRandomEnemyType(wave);
+      enemyType = this.getRandomEnemyType(wave, false);
     }
 
     // Spawn position (around player)
@@ -88,7 +105,7 @@ export class WaveManager {
     this.enemiesSpawned++;
   }
 
-  private getRandomEnemyType(wave: number): EnemyType {
+  private getRandomEnemyType(wave: number, isHordeWave: boolean = false): EnemyType {
     const types: EnemyType[] = [EnemyType.RUSHER];
     
     // Gradually unlock enemy types
@@ -100,6 +117,14 @@ export class WaveManager {
     if (wave >= 7) types.push(EnemyType.SHIELDER, EnemyType.SNIPER);
     if (wave >= 8) types.push(EnemyType.SPAWNER);
     if (wave >= 9) types.push(EnemyType.GHOST);
+    
+    // On horde waves, increase chance of tougher enemies
+    if (isHordeWave) {
+      // Add extra weight to tanks and special enemies
+      types.push(EnemyType.TANK, EnemyType.TANK);
+      if (wave >= 5) types.push(EnemyType.CHARGER, EnemyType.TELEPORTER);
+      if (wave >= 7) types.push(EnemyType.SNIPER);
+    }
 
     return types[Math.floor(Math.random() * types.length)];
   }

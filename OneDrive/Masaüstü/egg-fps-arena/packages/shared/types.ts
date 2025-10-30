@@ -13,6 +13,20 @@ export interface PlayerState {
   weapon: WeaponType;
   isDead: boolean;
   dashCooldown: number;
+  // Extended stats for display
+  damageMultiplier: number;
+  fireRateMultiplier: number;
+  moveSpeedMultiplier: number;
+  critChance: number;
+  critDamage: number;
+  lifesteal: number;
+  armor: number;
+  regenPerSecond: number;
+  projectileCount: number;
+  pierceCount: number;
+  pickupRange: number;
+  xpMultiplier: number;
+  luck: number;
 }
 
 // Enemy types
@@ -123,11 +137,14 @@ export interface MetaUpgrades {
   xpBonus: number;
   startingLevel: number;
   unlockedWeapons: WeaponType[];
+  banishSlots: number;    // How many upgrades can be banished
+  skipSlots: number;      // How many times can skip
+  refreshSlots: number;   // How many times can refresh
 }
 
 export interface SaveData {
   metaUpgrades: MetaUpgrades;
-  totalCoins: number;
+  totalTokens: number;  // Changed from coins to tokens
   highScores: {
     [arenaId: string]: {
       wave: number;
@@ -140,4 +157,12 @@ export interface SaveData {
     sfxVolume: number;
     musicVolume: number;
   };
+}
+
+// Run-specific data
+export interface RunData {
+  banishedUpgrades: Set<string>;  // Upgrades banished this run
+  skipsRemaining: number;
+  refreshesRemaining: number;
+  tokensEarned: number;
 }

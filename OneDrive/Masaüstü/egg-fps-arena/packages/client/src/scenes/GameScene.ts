@@ -17,14 +17,26 @@ export class GameScene extends Phaser.Scene {
   private xpOrbs!: Phaser.GameObjects.Group;
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
   private wasd!: any;
+  private metaSystem: any;
 
   constructor() {
     super({ key: 'GameScene' });
   }
 
   create(): void {
+    // Get meta system from registry
+    this.metaSystem = this.registry.get('metaSystem');
+    
     // Initialize systems
     this.stateManager = new StateManager();
+    
+    // Initialize run data with meta upgrades
+    if (this.metaSystem) {
+      const metaUpgrades = this.metaSystem.getMetaUpgrades();
+      this.stateManager.runData.skipsRemaining = metaUpgrades.skipSlots;
+      this.stateManager.runData.refreshesRemaining = metaUpgrades.refreshSlots;
+    }
+    
     this.waveManager = new WaveManager(this, this.stateManager);
     this.xpSystem = new XPSystem(this.stateManager);
     this.combatSystem = new CombatSystem(this.stateManager);
@@ -45,6 +57,19 @@ export class GameScene extends Phaser.Scene {
     // Setup input
     this.cursors = this.input.keyboard!.createCursorKeys();
     this.wasd = this.input.keyboard!.addKeys('W,A,S,D');
+    
+    // TAB tuşu - Stats ekranı
+    this.input.keyboard!.on('keydown-TAB', (event: KeyboardEvent) => {
+      event.preventDefault();
+      this.stateManager.gameState.isPaused = true;
+      this.scene.launch('StatsScene', { stateManager: this.stateManager });
+    });
+    
+    // ESC tuşu - Pause
+    this.input.keyboard!.on('keydown-ESC', () => {
+      this.stateManager.gameState.isPaused = true;
+      this.scene.launch('PauseScene', { stateManager: this.stateManager });
+    });
 
     // Setup HUD
     this.createHUD();
@@ -141,6 +166,12 @@ export class GameScene extends Phaser.Scene {
     const killsText = this.registry.get('killsText') as Phaser.GameObjects.Text;
     if (killsText) {
       killsText.setText(`Kills: ${game.kills}`);
+    }
+    
+    // Update tokens text
+    const tokensText = this.registry.get('tokensText') as Phaser.GameObjects.Text;
+    if (tokensText) {
+      tokensText.setText(`🥚 ${Math.floor(this.stateManager.runData.tokensEarned)}`);
     }
   }
 
@@ -247,6 +278,13 @@ export class GameScene extends Phaser.Scene {
       fontSize: '16px',
       color: '#FF6B6B'
     }).setScrollFactor(0).setOrigin(1, 0);
+    
+    // Egg Tokens counter - YENİ!
+    const tokensText = this.add.text(width - 20, 110, '🥚 0', {
+      fontSize: '18px',
+      color: '#FFD700',
+      fontStyle: 'bold'
+    }).setScrollFactor(0).setOrigin(1, 0);
 
     // Store references for updates
     this.registry.set('hpBar', hpBar);
@@ -256,19 +294,32 @@ export class GameScene extends Phaser.Scene {
     this.registry.set('levelText', levelText);
     this.registry.set('waveText', waveText);
     this.registry.set('killsText', killsText);
+    this.registry.set('tokensText', tokensText);
   }
 
   private showLevelUpScreen(): void {
     this.stateManager.gameState.isPaused = true;
-    this.scene.launch('LevelUpScene', { stateManager: this.stateManager });
+    this.scene.launch('LevelUpScene', { 
+      stateManager: this.stateManager,
+      metaSystem: this.metaSystem 
+    });
   }
 
   private gameOver(): void {
     this.stateManager.gameState.isGameOver = true;
+    
+    // Tokenları kaydet
+    if (this.metaSystem) {
+      const tokensEarned = this.stateManager.runData.tokensEarned;
+      this.metaSystem.addTokens(tokensEarned);
+      console.log(`🪙 Earned ${tokensEarned} tokens this run!`);
+    }
+    
     this.scene.start('GameOverScene', {
       wave: this.stateManager.gameState.wave,
       time: Math.floor(this.stateManager.gameState.timeElapsed / 1000),
-      kills: this.stateManager.gameState.kills
+      kills: this.stateManager.gameState.kills,
+      tokens: this.stateManager.runData.tokensEarned
     });
   }
 

@@ -32,24 +32,38 @@ export class MenuScene extends Phaser.Scene {
     });
     subtitle.setOrigin(0.5);
 
+    // Egg Token display
+    const tokens = this.metaSystem.getTokens();
+    const tokenText = this.add.text(width / 2, 200, `🥚 Egg Tokens: ${tokens}`, {
+      fontSize: '28px',
+      color: '#FFD700',
+      fontStyle: 'bold'
+    });
+    tokenText.setOrigin(0.5);
+
     // Play button
-    const playButton = this.createButton(width / 2, height / 2 + 50, 'PLAY', () => {
+    const playButton = this.createButton(width / 2, height / 2 + 20, 'PLAY', () => {
       this.scene.start('GameScene');
     });
 
+    // Shop button - YENİ!
+    const shopButton = this.createButton(width / 2, height / 2 + 100, '🏪 SHOP', () => {
+      this.scene.start('ShopScene', { metaSystem: this.metaSystem });
+    });
+
     // Meta upgrades button
-    const upgradesButton = this.createButton(width / 2, height / 2 + 130, '💎 UPGRADES', () => {
+    const upgradesButton = this.createButton(width / 2, height / 2 + 180, '💎 UPGRADES', () => {
       this.scene.start('MetaUpgradesScene', { metaSystem: this.metaSystem });
     });
 
     // Settings button
-    const settingsButton = this.createButton(width / 2, height / 2 + 210, 'SETTINGS', () => {
+    const settingsButton = this.createButton(width / 2, height / 2 + 260, 'SETTINGS', () => {
       // TODO: Open settings screen
       console.log('Settings coming soon!');
     });
 
     // Credits
-    const credits = this.add.text(width / 2, height - 30, 'Made with ❤️ | v2.0.0', {
+    const credits = this.add.text(width / 2, height - 30, 'Made with ❤️ | v3.0.0', {
       fontSize: '16px',
       color: '#888888'
     });

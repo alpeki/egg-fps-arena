@@ -5,6 +5,9 @@ import { MenuScene } from '../scenes/MenuScene.js';
 import { GameOverScene } from '../scenes/GameOverScene.js';
 import { LevelUpScene } from '../scenes/LevelUpScene.js';
 import { MetaUpgradesScene } from '../scenes/MetaUpgradesScene.js';
+import { StatsScene } from '../scenes/StatsScene.js';
+import { ShopScene } from '../scenes/ShopScene.js';
+import { PauseScene } from '../scenes/PauseScene.js';
 
 export class Game {
   private game: Phaser.Game;
@@ -23,7 +26,7 @@ export class Game {
           debug: false
         }
       },
-      scene: [MenuScene, GameScene, LevelUpScene, GameOverScene, MetaUpgradesScene]
+      scene: [MenuScene, GameScene, LevelUpScene, GameOverScene, MetaUpgradesScene, StatsScene, ShopScene, PauseScene]
     };
 
     this.game = new Phaser.Game(config);

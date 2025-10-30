@@ -1,4 +1,4 @@
-import { GameState, PlayerState, EnemyState, XPOrb } from '../../../shared/types';
+import { GameState, PlayerState, EnemyState, XPOrb, RunData } from '../../../shared/types';
 import { PLAYER_BASE_HP } from '../../../shared/constants';
 
 export class StateManager {
@@ -7,6 +7,7 @@ export class StateManager {
   public enemies: Map<string, EnemyState>;
   public xpOrbs: Map<string, XPOrb>;
   public activeUpgrades: Map<string, number>; // upgradeId -> stack count
+  public runData: RunData;
 
   constructor() {
     this.gameState = {
@@ -21,6 +22,12 @@ export class StateManager {
     this.enemies = new Map();
     this.xpOrbs = new Map();
     this.activeUpgrades = new Map();
+    this.runData = {
+      banishedUpgrades: new Set(),
+      skipsRemaining: 1,
+      refreshesRemaining: 1,
+      tokensEarned: 0
+    };
   }
 
   private createInitialPlayerState(): PlayerState {
@@ -37,7 +44,21 @@ export class StateManager {
       xpToNextLevel: 100,
       weapon: 'pistol' as any,
       isDead: false,
-      dashCooldown: 0
+      dashCooldown: 0,
+      // Extended stats
+      damageMultiplier: 1.0,
+      fireRateMultiplier: 1.0,
+      moveSpeedMultiplier: 1.0,
+      critChance: 0,
+      critDamage: 1.5,
+      lifesteal: 0,
+      armor: 0,
+      regenPerSecond: 0,
+      projectileCount: 1,
+      pierceCount: 0,
+      pickupRange: 100,
+      xpMultiplier: 1.0,
+      luck: 0
     };
   }
 
@@ -53,6 +74,12 @@ export class StateManager {
     this.enemies.clear();
     this.xpOrbs.clear();
     this.activeUpgrades.clear();
+    this.runData = {
+      banishedUpgrades: new Set(),
+      skipsRemaining: 1,
+      refreshesRemaining: 1,
+      tokensEarned: 0
+    };
   }
 
   update(delta: number): void {

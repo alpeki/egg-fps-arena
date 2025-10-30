@@ -24,11 +24,17 @@ export const ENEMY_HP_SCALE_PER_WAVE = 0.15; // 15% HP increase per wave
 export const ENEMY_DMG_SCALE_PER_WAVE = 0.12; // 12% damage increase per wave
 
 // Wave constants
-export const WAVE_BASE_ENEMY_COUNT = 8;      // Start with fewer enemies
-export const WAVE_SCALING_FACTOR = 1.25;     // Slower enemy count growth
-export const WAVE_BOSS_INTERVAL = 5;
+export const WAVE_BASE_ENEMY_COUNT = 10;     // Starting enemy count
+export const WAVE_SCALING_FACTOR = 1.35;     // Enemy count growth per wave
+export const WAVE_BOSS_INTERVAL = 10;        // Boss every 10 waves
+export const WAVE_HORDE_MULTIPLIER = 4;      // 4x enemies on horde waves
 export const WAVE_SPAWN_INTERVAL_BASE = 2000; // ms
 export const WAVE_SPAWN_INTERVAL_MIN = 500;   // Minimum spawn interval
+
+// Token system (balanced for permanent upgrades)
+export const TOKENS_PER_WAVE = 2;
+export const TOKENS_PER_KILL = 0.2;
+export const TOKENS_PER_MINUTE = 5;
 
 // Weapon constants
 export const WEAPON_PROJECTILE_SPEED = 800;
